@@ -42,10 +42,6 @@
                     document.write(" Key:"+key)
                     document.write("<br><br><br>")
                     var len = key.length
-                    localStorage.setItem('sessionkey',key)
-                    var ret=localStorage.getItem('sessionkey');
-                    document.write(" Retireve Key:"+ret)
-                    document.write("<br><br><br>")
                     var vpat = new Array()
                     var bc = new Array(len * 7)
                     for (var k = 0; k < len; k++) {
@@ -76,8 +72,6 @@
                             vpat[j++] = 800
                         }
                     }
-                    localStorage.setItem('binarray',JSON.stringify(bc))
-                    var retbc=localStorage.getItem('binarray')
                     document.write("Pattern: " +retbc)
                     document.write("Vib: " + vpat)
                     navigator.vibrate(vpat)
