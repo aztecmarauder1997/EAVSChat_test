@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vibration Module</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        .buttonarea {
+            text-align: center;
+        }
+
+        .buttonsep {
+            padding: 0.5em;
+            margin: 1em auto;
+        }
+    </style>
+    <body>
+        <h1>Vibration Module Testing</h1>
+        <div class="buttonarea">
+            <button id="but1" class="buttonsep">Generate Vibration</button>
+        </div>
+        <script>
+            document.getElementById('but1').addEventListener('click', vibration)
+            function vibration() {
+                var sec = Math.round(Date.now() / 1000);
+                var m = sec % 10;
+                if (m < 5) { m = 10 - m; }
+                else { m = m + 1; }
+                var prompt2 = window.open("", "prompt2");
+                prompt2.document.write("Vibration will begin in:"+m );
+                prompt2.setTimeout('window.close()', m*1000);
+                setTimeout(function () {
+                    var key = "";
+                    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+                    for (var i = 0; i < 3; i++){
+                        key += possible.charAt(Math.floor(Math.random() * possible.length));
+                    }        
+                    document.write(" Key:"+key)
+                    document.write("<br><br><br>")
+                    var len = key.length
+                    localStorage.setItem('sessionkey',key)
+                    var ret=localStorage.getItem('sessionkey');
+                    document.write(" Retireve Key:"+ret)
+                    document.write("<br><br><br>")
+                    var vpat = new Array()
+                    var bc = new Array(len * 7)
+                    for (var k = 0; k < len; k++) {
+                        var c = key.charCodeAt(k)
+                        document.write(" ASCII Code:" + c)
+                        var d = c.toString(2)
+                        document.write(" Binary:" + d)
+                        var bp = String(d).split("").map((d) => {
+                            return Number(d)
+                        })
+                       document.write(" Array: " + bp)
+                        for (var m = 0; m < 7; m++) {
+                            document.write(" Character: " + bp[m])
+                            bc[k * 7 + m] = bp[m]
+                        }
+                        document.write(" Bitcharacter:" + bc)
+                        document.write("<br><br><br>")
+                    }
+                    var j = 0
+                    for (var i = 0; i < len * 7; i++) {
+                        var x = bc[i]
+                        if (x == 1) {
+                            vpat[j++] = 800
+                            vpat[j++] = 0
+                        }
+                        else if (x == 0) {
+                            vpat[j++] = 0
+                            vpat[j++] = 800
+                        }
+                    }
+                    localStorage.setItem('binarray',JSON.stringify(bc))
+                    var retbc=localStorage.getItem('binarray')
+                    document.write("Pattern: " +retbc)
+                    document.write("Vib: " + vpat)
+                    navigator.vibrate(vpat)
+                }, m*1000);
+            }
+        </script>
+    </body>
+</head>
+</html>

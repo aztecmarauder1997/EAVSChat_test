@@ -1,0 +1,117 @@
+<!DOCTYPE html5>
+<html>
+<head>
+    <title>Accelerometer Module</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8" />
+    <style>
+        h1 {
+            text-align: center;
+        }
+
+        .buttonarea {
+            text-align: center;
+        }
+
+        .buttonsep {
+            padding: 0.5em;
+            margin: 1em auto;
+            display:block;
+        }
+
+        .buttonsep2 {
+            padding: 0.5em;
+            margin: 1em auto;
+            display:none;
+        }
+
+    </style>
+    <body>
+        <h1>Accelerometer Module</h1>
+        <h3>Welcome to the page where the accelerometer is used to read and decode the vibrations</h3>
+        <div class="buttonarea">
+            <button id="but1" class="buttonsep">Read Vibration</button>
+            <button id="but2" class="buttonsep2" onclick='window.location.href="http://127.0.0.1:49179/"'>Proceed</button>
+        </div>
+        <br>Pattern detected = <small id="key"></small>
+        <script>
+            document.getElementById('but1').addEventListener('click', accelerometer);
+            function accelerometer() {
+                var sec = Math.round(Date.now() / 1000);
+                var m = sec % 10;
+                if (m < 5) { m = 10 - m; }
+                else { m = m + 0; }
+                var prompt1 = window.open("", "prompt1");
+                prompt1.document.write("The motion detect will be started in:"+m);
+                prompt1.setTimeout('window.close()', m*1000);
+                var threshold = 1.25;
+                var x1, y1, z1, x2, y2, z2, xdiff, ydiff, zdiff;
+                x2 = y2 = z2 = 0;
+                var deco_bin = [];
+                var part = bit0 = bit1 = 0;
+                var nbit = 0;
+                setTimeout(function () {
+                    window.addEventListener('devicemotion', decode);
+                    function decode(event) {
+                        if (nbit < 21) {
+                            x1 = event.accelerationIncludingGravity.x;
+                            y1 = event.accelerationIncludingGravity.y;
+                            z1 = event.accelerationIncludingGravity.z;
+                            if (part < 16) {
+                                xdiff=Math.abs(x1 - x2);
+                                ydiff=Math.abs(y1 - y2);
+                                zdiff=Math.abs(z1 - z2);
+                                x2=x1
+                                y2=y1
+                                z2=z1
+                                if (xdiff > threshold ||  ydiff> threshold || zdiff> threshold){
+                                    bit1++;
+                                    part++;
+                                }
+                                else {
+                                    bit0++;
+                                    part++;
+                                }
+                            }
+                        }
+                        if (part >= 16) {
+                            if (bit1 > bit0) {
+                                deco_bin[nbit] = 1;
+                            }
+                            else {
+                                deco_bin[nbit] = 0;
+
+                            }
+                            bit1 = 0;
+                            bit0 = 0;
+                            nbit++;
+                            part=0;
+                        }
+                        document.getElementById("key").innerHTML=deco_bin;
+                        var arr = deco_bin;
+                        var alpha1 = arr.slice(0, 7);
+                        var alpha2 = arr.slice(7, 14);
+                        var alpha3 = arr.slice(14, 21);
+                        //document.getElementById("alph1").innerHTML = alpha1;
+                        //document.getElementById("alph2").innerHTML = alpha2;
+                        //document.getElementById("alph3").innerHTML = alpha3;
+                        var alst1 = alpha1.join('');
+                        var alst2 = alpha2.join('');
+                        var alst3 = alpha3.join('');
+                        //document.getElementById("alphs1").innerHTML = alst1;
+                        //document.getElementById("alphs2").innerHTML = alst2;
+                        //document.getElementById("alphs3").innerHTML = alst3;
+                        var dec1 = parseInt(alst1, 2);
+                        var dec2 = parseInt(alst2, 2);
+                        var dec3 = parseInt(alst3, 2);
+                        //document.getElementById("deci1").innerHTML = dec1;
+                        //document.getElementById("deci2").innerHTML = dec2;
+                        //document.getElementById("deci3").innerHTML = dec3;
+                        var pswd = String.fromCharCode(dec1, dec2, dec3);
+                    }
+                }, (m*1000));
+            }
+        </script>
+    </body>
+</head>
+</html>
